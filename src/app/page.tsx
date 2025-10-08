@@ -1,14 +1,51 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+
+type Note = {
+  timestamp: string
+  text: string
+}
 
 export default function Home() {
-  const [notes, setNotes] = useState<string[]>([])
+  const [notes, setNotes] = useState<Note[]>([])
   const [currentNote, setCurrentNote] = useState('')
+  const [isRunning, setIsRunning] = useState(false)
+  const [seconds, setSeconds] = useState(0)
+  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null)
+
+  const formatTime = (totalSeconds: number): string => {
+    const hours = Math.floor(totalSeconds / 3600)
+    const minutes = Math.floor((totalSeconds % 3600) / 60)
+    const secs = totalSeconds % 60
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+  }
+
+  const handleStartTimer = () => {
+    if (!isRunning) {
+      setIsRunning(true)
+      const id = setInterval(() => {
+        setSeconds(prev => prev + 1)
+      }, 1000)
+      setIntervalId(id)
+    }
+  }
+
+  useEffect(() => {
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId)
+      }
+    }
+  }, [intervalId])
 
   const handleAddNote = () => {
-    if (currentNote.trim()) {
-      setNotes([...notes, currentNote])
+    if (currentNote.trim() && isRunning) {
+      const newNote: Note = {
+        timestamp: formatTime(seconds),
+        text: currentNote.trim()
+      }
+      setNotes([...notes, newNote])
       setCurrentNote('')
     }
   }
@@ -21,9 +58,20 @@ export default function Home() {
         </h1>
 
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <div className="flex justify-center mb-6">
-            <button className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors">
-              Start Timer
+          <div className="text-center mb-6">
+            <div className="text-4xl font-mono font-bold text-gray-800 mb-4">
+              {formatTime(seconds)}
+            </div>
+            <button
+              onClick={handleStartTimer}
+              disabled={isRunning}
+              className={`font-semibold py-2 px-6 rounded-lg transition-colors ${
+                isRunning
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-red-500 hover:bg-red-600'
+              } text-white`}
+            >
+              {isRunning ? 'Timer Running' : 'Start Timer'}
             </button>
           </div>
 
@@ -58,8 +106,8 @@ export default function Home() {
           ) : (
             <ul className="space-y-2">
               {notes.map((note, index) => (
-                <li key={index} className="bg-gray-50 p-3 rounded-md">
-                  {note}
+                <li key={index} className="bg-gray-50 p-3 rounded-md text-black">
+                  <span className="font-mono">{note.timestamp}</span> - {note.text}
                 </li>
               ))}
             </ul>
