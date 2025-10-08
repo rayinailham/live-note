@@ -89,7 +89,7 @@ test.describe('Livestream Timestamp App', () => {
     const saveButton = page.locator('button:has-text("Save Stream")');
     const notesList = page.locator('div.w-3\\/4').locator('ul.space-y-2');
 
-    await streamNameInput.fill('Test Stream');
+    await streamNameInput.type('Test Stream');
     await expect(streamNameInput).toHaveValue('Test Stream');
     await startButton.click();
     await page.waitForTimeout(1000); // Wait for timer to start
@@ -121,7 +121,7 @@ test.describe('Livestream Timestamp App', () => {
     const addNoteButton = page.locator('button:has-text("Add")');
     const saveButton = page.locator('button:has-text("Save Stream")');
 
-    await streamNameInput.fill('Test Stream');
+    await streamNameInput.type('Test Stream');
     await startButton.click();
     await page.waitForTimeout(1000);
     await noteInput.fill('Test note');

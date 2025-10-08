@@ -25,6 +25,8 @@ export default function Home() {
   const [streamName, setStreamName] = useState('')
   const [archivedStreams, setArchivedStreams] = useState<Stream[]>([])
   const [selectedStream, setSelectedStream] = useState<Stream | null>(null)
+  const [editingNoteIndex, setEditingNoteIndex] = useState<number | null>(null)
+  const [editingNoteText, setEditingNoteText] = useState('')
 
   const formatTime = (totalSeconds: number): string => {
     const hours = Math.floor(totalSeconds / 3600)
@@ -84,8 +86,11 @@ export default function Home() {
       setSeconds(parseInt(savedSeconds, 10) || 0)
     }
     if (savedArchivedStreams) {
+      console.log('savedArchivedStreams:', savedArchivedStreams)
       try {
-        setArchivedStreams(JSON.parse(savedArchivedStreams))
+        const parsed = JSON.parse(savedArchivedStreams)
+        console.log('Parsed archivedStreams:', parsed)
+        setArchivedStreams(parsed)
       } catch (error) {
         console.error('Error parsing saved archived streams:', error)
       }
@@ -102,6 +107,7 @@ export default function Home() {
   }, [notes])
 
   useEffect(() => {
+    console.log('Saving archivedStreams to localStorage:', archivedStreams)
     localStorage.setItem('livestream-archivedStreams', JSON.stringify(archivedStreams))
   }, [archivedStreams])
 
@@ -188,6 +194,45 @@ export default function Home() {
     URL.revokeObjectURL(url)
   }
 
+  const handleEditNote = (index: number, text: string) => {
+    setEditingNoteIndex(index)
+    setEditingNoteText(text)
+  }
+
+  const handleSaveEdit = () => {
+    if (editingNoteIndex === null || !selectedStream) return
+    const updatedNotes = [...selectedStream.notes]
+    updatedNotes[editingNoteIndex] = {
+      ...updatedNotes[editingNoteIndex],
+      text: editingNoteText.trim()
+    }
+    const updatedStream = { ...selectedStream, notes: updatedNotes }
+    const updatedArchivedStreams = archivedStreams.map(stream =>
+      stream.name === selectedStream.name ? updatedStream : stream
+    )
+    setArchivedStreams(updatedArchivedStreams)
+    setSelectedStream(updatedStream)
+    setEditingNoteIndex(null)
+    setEditingNoteText('')
+  }
+
+  const handleCancelEdit = () => {
+    setEditingNoteIndex(null)
+    setEditingNoteText('')
+  }
+
+  const handleDeleteNote = (index: number) => {
+    if (!selectedStream) return
+    if (!confirm('Are you sure you want to delete this note?')) return
+    const updatedNotes = selectedStream.notes.filter((_, i) => i !== index)
+    const updatedStream = { ...selectedStream, notes: updatedNotes }
+    const updatedArchivedStreams = archivedStreams.map(stream =>
+      stream.name === selectedStream.name ? updatedStream : stream
+    )
+    setArchivedStreams(updatedArchivedStreams)
+    setSelectedStream(updatedStream)
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <div className="w-1/4 bg-white shadow-md p-4 overflow-y-auto">
@@ -217,7 +262,7 @@ export default function Home() {
           </ul>
         )}
       </div>
-      <div className="w-3/4 p-8 flex flex-col min-h-0">
+      <div className="w-3/4 p-8 flex flex-col h-full">
         {selectedStream ? (
           <div>
             <h1 className="text-3xl font-bold mb-8 text-gray-800">
@@ -235,8 +280,52 @@ export default function Home() {
               ) : (
                 <ul className="space-y-2">
                   {selectedStream.notes.map((note, index) => (
-                    <li key={index} className="bg-gray-50 p-3 rounded-md text-black">
-                      <span className="font-mono">{note.timestamp}</span> - {note.text}
+                    <li key={index} className="bg-gray-50 p-3 rounded-md text-black flex items-center justify-between">
+                      {editingNoteIndex === index ? (
+                        <div className="flex-1 flex items-center space-x-2">
+                          <span className="font-mono text-gray-600">{note.timestamp}</span>
+                          <input
+                            type="text"
+                            value={editingNoteText}
+                            onChange={(e) => setEditingNoteText(e.target.value)}
+                            className="flex-1 px-2 py-1 border border-gray-300 rounded text-black"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') handleSaveEdit()
+                              if (e.key === 'Escape') handleCancelEdit()
+                            }}
+                          />
+                          <button
+                            onClick={handleSaveEdit}
+                            className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm"
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={handleCancelEdit}
+                            className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <>
+                          <span><span className="font-mono">{note.timestamp}</span> - {note.text}</span>
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => handleEditNote(index, note.text)}
+                              className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteNote(index)}
+                              className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </li>
                   ))}
                 </ul>
