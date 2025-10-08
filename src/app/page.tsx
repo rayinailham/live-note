@@ -131,6 +131,10 @@ export default function Home() {
       alert('No notes to save. Add some notes first.')
       return
     }
+    if (archivedStreams.some(stream => stream.name === streamName.trim())) {
+      alert('A stream with this name already exists. Please choose a different name.')
+      return
+    }
     const newStream: Stream = {
       name: streamName.trim(),
       notes: [...notes],
