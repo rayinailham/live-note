@@ -6,7 +6,7 @@ test.describe('Livestream Timestamp App', () => {
   });
 
   test('should display the app title', async ({ page }) => {
-    await expect(page.locator('h1')).toHaveText('Livestream Timestamp App');
+    await expect(page.locator('h1')).toHaveText('Live Note - Livestream Timestamp Tool');
   });
 
   test('should start and stop timer', async ({ page }) => {
@@ -87,18 +87,22 @@ test.describe('Livestream Timestamp App', () => {
     const noteInput = page.locator('#noteInput');
     const addNoteButton = page.locator('button:has-text("Add Note")');
     const saveButton = page.locator('button:has-text("Save Stream")');
+    const notesList = page.locator('ul.space-y-2');
 
     await streamNameInput.fill('Test Stream');
+    await expect(streamNameInput).toHaveValue('Test Stream');
     await startButton.click();
     await page.waitForTimeout(1000); // Wait for timer to start
     await noteInput.fill('Archived note');
     await addNoteButton.click();
+    await page.waitForTimeout(100); // Wait for state update
+    await expect(notesList.locator('li')).toHaveCount(1);
     await expect(saveButton).toBeEnabled();
     await saveButton.click();
 
     // Check if stream name and notes are cleared after save
     await expect(streamNameInput).toHaveValue('');
-    await expect(page.locator('ul.space-y-2 li')).toHaveCount(0);
+    await expect(notesList.locator('li')).toHaveCount(0);
   });
 
   test('should handle edge case: add note without starting timer', async ({ page }) => {
