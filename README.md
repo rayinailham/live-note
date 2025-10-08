@@ -1,33 +1,56 @@
-# Next.js Template
+# Livestream Timestamp App (Live Note)
 
-Template Next.js sederhana dengan TypeScript dan Tailwind CSS.
+Aplikasi untuk membantu pembuat konten atau penonton livestream dalam mencatat momen penting selama siaran langsung. Dengan fitur timestamp otomatis, pengguna dapat menandai waktu spesifik dari livestream dan menambahkan catatan terkait, sehingga memudahkan untuk mereview atau membuat ringkasan konten nanti.
+
+## Fitur Utama
+
+- **Tombol Start**: Memulai penghitung waktu (timer) dari nol saat diklik.
+- **Input Notes**: Kolom teks untuk menulis catatan atau deskripsi momen.
+- **Tombol Add Note**: Menambahkan catatan baru dengan timestamp otomatis berdasarkan waktu yang telah berjalan sejak tombol start diklik.
+- **List Notes**: Menampilkan semua catatan yang telah ditambahkan dalam urutan kronologis, berjajar ke bawah.
+- **Penyimpanan Lokal**: Catatan disimpan secara otomatis di local storage browser untuk persistensi data antar sesi aplikasi.
+- **Ekspor Catatan**: Opsi untuk mengekspor daftar catatan sebagai file .txt atau .md untuk penyimpanan eksternal atau berbagi.
+
+## Alur Penggunaan
+
+1. **Persiapan**: Buka aplikasi dan pastikan siaran livestream sedang berjalan di perangkat terpisah atau tab lain.
+2. **Memulai Timer**: Klik tombol "Start" untuk memulai penghitung waktu. Timer akan mulai berjalan dari 00:00:00.
+3. **Mencatat Momen**: Saat ada momen penting dalam livestream, tulis deskripsi singkat di kolom input notes.
+4. **Menambahkan Catatan**: Klik tombol "Add Note" untuk menyimpan catatan tersebut. Catatan akan otomatis disertai dengan timestamp saat ini (misalnya, "00:05:23 - Deskripsi momen").
+5. **Melihat Daftar Catatan**: Semua catatan akan muncul dalam daftar yang berjajar ke bawah, memungkinkan pengguna untuk melihat kronologi peristiwa selama livestream.
+6. **Mengulangi Proses**: Ulangi langkah 3-4 untuk setiap momen yang ingin dicatat. Timer terus berjalan hingga aplikasi ditutup atau direset.
+7. **Menyimpan atau Mengekspor**: Catatan disimpan otomatis di local storage browser. Klik tombol ekspor untuk mengunduh daftar catatan sebagai file .txt atau .md.
 
 ## Struktur Folder
 
 ```
-nextjs-template/
+live-note/
 ├── src/
 │   ├── app/           # Halaman Next.js dengan App Router
-│   ├── components/    # Komponen React yang dapat digunakan kembali
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   └── archive/
+│   │       └── page.tsx
 │   ├── styles/        # File CSS global
-│   ├── lib/           # Utilitas dan helper functions
-│   ├── hooks/         # Custom React hooks
-│   └── types/         # TypeScript type definitions
-├── public/            # Asset statis
-└── docs/              # Dokumentasi
+│   │   └── globals.css
+│   └── (other folders as needed)
+├── public/
+│   └── docs/
+│       ├── app-files-explanation.md
+│       └── livestream-timestamp-app-concept.md
+├── tests/
+│   └── livestream.spec.ts
+├── playwright.config.ts
+└── (other config files)
 ```
 
-## Fitur
+## Phase Pengembangan
 
-- ✅ Next.js 14 dengan App Router
-- ✅ TypeScript
-- ✅ Tailwind CSS
-- ✅ Turbopack untuk development
-- ✅ Custom path aliases
-- ✅ ESLint configuration
-- ✅ Komponen siap pakai
-- ✅ Custom hooks
-- ✅ Type definitions
+- ✅ Phase 1: Setup Proyek dan UI Dasar
+- ✅ Phase 2: Timer dan Add Notes
+- ✅ Phase 3: Local Storage Integration
+- ⏳ Phase 4: Fitur Ekspor
+- ✅ Phase 5: Testing dan Polish
 
 ## Quick Start
 
@@ -43,28 +66,33 @@ npm run dev
 - `npm run start` - Menjalankan production server
 - `npm run lint` - Menjalankan ESLint
 - `npm run type-check` - Cek TypeScript errors
+- `npm run test` - Menjalankan Playwright tests
 
 ## Path Aliases
 
-Template ini menggunakan path aliases untuk import yang lebih bersih:
+Aplikasi ini menggunakan path aliases untuk import yang lebih bersih:
 
 ```typescript
-import Button from '@/components/Button'
-import { cn } from '@/lib/utils'
-import type { User } from '@/types'
+import Component from '@/components/Component'
+import { util } from '@/lib/utils'
+import styles from '@/styles/globals.css'
+import type User from '@/types/user'
+import { hook } from '@/hooks/useHook'
 ```
 
 Available aliases:
 - `@/*` → `./src/*`
-- `@/app/*` → `./src/app/*`
-- `@/components/*` → `./src/components/*`
-- `@/lib/*` → `./src/lib/*`
-- `@/utils/*` → `./src/utils/*`
-- `@/hooks/*` → `./src/hooks/*`
-- `@/types/*` → `./src/types/*`
-- `@/styles/*` → `./src/styles/*`
-- `@/public/*` → `./public/*`
+
+## Testing
+
+Aplikasi menggunakan Playwright untuk end-to-end testing. Jalankan tests dengan:
+
+```bash
+npm run test
+```
+
+Laporan test tersedia di `playwright-report/` dan `test-results/`.
 
 ## Customization
 
-Template ini dirancang untuk dikustomisasi sesuai kebutuhan project Anda. Hapus komponen yang tidak diperlukan dan tambahkan sesuai requirements.
+Aplikasi ini dapat dikustomisasi sesuai kebutuhan. Tambahkan fitur baru atau modifikasi UI sesuai requirements.
