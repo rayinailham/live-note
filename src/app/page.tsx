@@ -153,6 +153,23 @@ export default function Home() {
     }
   }
 
+  const handleExportNotes = () => {
+    if (notes.length === 0) {
+      alert('No notes to export. Add some notes first.')
+      return
+    }
+    const content = notes.map(note => `${note.timestamp} - ${note.text}`).join('\n')
+    const blob = new Blob([content], { type: 'text/plain' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'livestream-notes.txt'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4 max-w-2xl">
@@ -243,6 +260,17 @@ export default function Home() {
               }`}
             >
               Save Stream
+            </button>
+            <button
+              onClick={handleExportNotes}
+              disabled={notes.length === 0}
+              className={`font-semibold py-2 px-6 rounded-lg transition-colors ${
+                notes.length > 0
+                  ? 'bg-orange-500 hover:bg-orange-600 text-white'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
+            >
+              Export Notes
             </button>
             <Link href="/archive" className="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors">
               View Archive

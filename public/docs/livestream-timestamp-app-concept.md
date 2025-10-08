@@ -41,14 +41,14 @@ Berikut adalah rencana pengembangan aplikasi secara terstruktur dalam beberapa p
 - **Deskripsi**: Implementasi state untuk timer (mulai dari 00:00:00 saat tombol Start diklik), fungsi untuk menambahkan note dengan timestamp otomatis berdasarkan waktu berjalan, dan tampilkan list notes dalam format "timestamp - teks note" yang berjajar ke bawah.
 - **Tujuan**: Fungsionalitas inti aplikasi (timer dan pencatatan) berjalan.
 
-### Phase 3: Local Storage Integration
+### [x] Phase 3: Local Storage Integration
 - **Deskripsi**: Tambahkan penyimpanan otomatis catatan di local storage browser. Gunakan `useEffect` untuk memuat data saat aplikasi dimuat dan menyimpan perubahan saat note ditambahkan, memastikan persistensi antar sesi.
 - **Tujuan**: Data tidak hilang saat browser ditutup atau aplikasi direfresh.
 
-### Phase 4: Fitur Ekspor
+###  Phase 4: Fitur Ekspor
 - **Deskripsi**: Tambahkan tombol ekspor yang memungkinkan pengguna mengunduh daftar catatan sebagai file .txt atau .md. Format file: daftar notes dengan timestamp dan teks, menggunakan API Blob dan link download.
 - **Tujuan**: Pengguna dapat menyimpan atau berbagi catatan secara eksternal.
 
-### Phase 5: Testing dan Polish
+### [x] Phase 5: Testing dan Polish
 - **Deskripsi**: Lakukan testing menyeluruh untuk semua fitur, handle edge cases (misalnya reset timer, clear semua notes, atau input kosong), dan perbaiki UI/UX (responsivitas, error handling, animasi sederhana). Jalankan build dan test di browser.
 - **Tujuan**: Aplikasi stabil, user-friendly, dan siap produksi.

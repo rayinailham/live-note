@@ -78,6 +78,23 @@ export default function Archive() {
     setEditingName('')
   }
 
+  const handleExportStream = (stream: Stream) => {
+    if (stream.notes.length === 0) {
+      alert('No notes to export for this stream.')
+      return
+    }
+    const content = stream.notes.map(note => `${note.timestamp} - ${note.text}`).join('\n')
+    const blob = new Blob([content], { type: 'text/plain' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${stream.name}-notes.txt`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4 max-w-4xl">
@@ -149,6 +166,17 @@ export default function Archive() {
                       className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
                     >
                       Edit Name
+                    </button>
+                    <button
+                      onClick={() => handleExportStream(stream)}
+                      disabled={stream.notes.length === 0}
+                      className={`px-4 py-2 rounded-md ${
+                        stream.notes.length > 0
+                          ? 'bg-orange-500 hover:bg-orange-600 text-white'
+                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      }`}
+                    >
+                      Export
                     </button>
                     <button
                       onClick={() => handleDelete(index)}
