@@ -33,7 +33,7 @@ Aplikasi ini dirancang untuk membantu pembuat konten atau penonton livestream da
 ## Phase Pengembangan
 Berikut adalah rencana pengembangan aplikasi secara terstruktur dalam beberapa phase untuk memastikan implementasi yang efisien dan dapat diuji secara bertahap.
 
-### Phase 1: Setup Proyek dan UI Dasar
+### [x] Phase 1: Setup Proyek dan UI Dasar
 - **Deskripsi**: Siapkan struktur proyek Next.js, buat layout halaman utama dengan komponen dasar: tombol Start, input untuk notes, tombol Add Note, dan area kosong untuk list notes. Pastikan styling menggunakan Tailwind CSS sesuai dengan pola proyek (gunakan path aliases seperti `@/components`).
 - **Tujuan**: Memiliki fondasi UI yang siap untuk interaksi dasar.
 
