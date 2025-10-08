@@ -1,48 +1,98 @@
-# Livestream Timestamp App (Live Note)
+# Live Note - Professional Livestream Timestamp Tool
 
-An app to help content creators or livestream viewers note important moments during live broadcasts. With automatic timestamp features, users can mark specific times from the livestream and add related notes, making it easier to review or summarize content later.
+A powerful web application designed for content creators, streamers, and live broadcast viewers to easily timestamp and archive important moments during livestreams. With automatic timestamp features, users can mark specific times from live broadcasts and add detailed notes, making it easier to review, summarize, or reference content later.
 
-## Main Features
+## Key Features for Content Creators
 
-- **Start Button**: Starts the timer from zero when clicked.
-- **Notes Input**: Text field for writing notes or descriptions of moments.
-- **Add Note Button**: Adds a new note with automatic timestamp based on elapsed time since the start button was clicked.
-- **Notes List**: Displays all added notes in chronological order, aligned downwards.
-- **Local Storage**: Notes are automatically saved in browser local storage for data persistence across app sessions.
-- **Export Notes**: Option to export the list of notes as a .txt or .md file for external storage or sharing.
+- **Automatic Timestamps**: Start a timer and automatically capture timestamps for every note during your livestream
+- **Stream Archiving**: Save complete streams with all notes and timestamps for future reference
+- **Export Functionality**: Download your timestamped notes as text files for sharing or backup
+- **Local Storage**: All data persists in your browser for seamless session management
+- **Real-time Notes**: Add notes instantly during live broadcasts without interrupting your workflow
+- **Chronological Organization**: View all notes in perfect chronological order with precise timing
 
-## Usage Flow
+## Perfect For
 
-1. **Preparation**: Open the app and ensure the livestream is running on a separate device or tab.
-2. **Starting Timer**: Click the "Start" button to start the timer. The timer will start running from 00:00:00.
-3. **Noting Moments**: When there's an important moment in the livestream, write a brief description in the notes input field.
-4. **Adding Note**: Click "Add Note" to save the note. The note will automatically include the current timestamp (e.g., "00:05:23 - Moment description").
-5. **Viewing Notes List**: All notes will appear in a list aligned downwards, allowing users to see the chronology of events during the livestream.
-6. **Repeating Process**: Repeat steps 3-4 for each moment to note. The timer continues running until the app is closed or reset.
-7. **Saving or Exporting**: Notes are automatically saved in browser local storage. Click the export button to download the notes list as a .txt or .md file.
+- **Streamers & Content Creators**: Keep track of highlights, technical issues, or important moments
+- **Live Event Organizers**: Document key moments during webinars, conferences, or live presentations
+- **Podcasters**: Timestamp important segments or guest appearances during recording sessions
+- **Educational Content**: Mark key learning points during live tutorials or lectures
+- **Sports Broadcasters**: Track game events, scores, and highlights in real-time
 
-## Folder Structure
+## How It Works
+
+1. **Launch Your Stream**: Open Live Note alongside your streaming software or viewing platform
+2. **Start Timing**: Click "Start Timer" to begin automatic timestamp tracking
+3. **Capture Moments**: When something important happens, quickly type a note and add it with automatic timestamp
+4. **Build Your Archive**: Save complete streams with all notes for future reference
+5. **Export & Share**: Download timestamped notes for editing, sharing, or archiving
+
+## Technical Features
+
+- Built with Next.js 14 and TypeScript for reliability
+- Responsive design works on desktop and mobile devices
+- Browser-based with local storage - no account required
+- Export notes as plain text files for maximum compatibility
+- Modern UI with Tailwind CSS for clean, professional appearance
+
+## Getting Started with Livestream Timestamping
+
+### Quick Setup
+
+1. **Access Live Note**: Open the application in your web browser
+2. **Prepare Your Stream**: Have your livestream running in another tab or device
+3. **Begin Timing**: Click the "Start Timer" button to initialize timestamp tracking
+
+### During Your Livestream
+
+1. **Monitor Your Content**: Watch your live broadcast while Live Note runs in the background
+2. **Capture Key Moments**: When important events occur, enter descriptive notes in the input field
+3. **Timestamp Automatically**: Click "Add Note" to save the note with the current stream timestamp
+4. **Continue Building**: Add as many timestamped notes as needed throughout your broadcast
+
+### After Streaming
+
+1. **Save Your Stream**: Enter a stream name and save the complete session with all notes
+2. **Export for Sharing**: Download your timestamped notes as a text file
+3. **Access Archive**: View previously saved streams in the archive section
+4. **Start Fresh**: Begin a new stream session whenever ready
+
+### Pro Tips for Content Creators
+
+- **Use Descriptive Notes**: Write clear, actionable notes that will be useful when reviewing later
+- **Regular Checkpoints**: Add notes at natural breaks or milestones in your content
+- **Stream Naming**: Use descriptive names that include date, topic, or episode number
+- **Export Regularly**: Download notes after important streams to ensure they're backed up
+- **Review Archives**: Use archived streams to improve future content and identify patterns
+
+## Project Architecture
 
 ```
 live-note/
 ├── src/
-│   ├── app/           # Next.js pages with App Router
-│   │   ├── layout.tsx
-│   │   ├── page.tsx
-│   │   └── archive/
+│   ├── app/                    # Next.js App Router pages
+│   │   ├── layout.tsx         # Root layout with SEO metadata
+│   │   ├── page.tsx           # Main livestream timestamp interface
+│   │   └── archive/           # Archived streams viewer
 │   │       └── page.tsx
-│   ├── styles/        # Global CSS files
+│   ├── styles/                # Global CSS and Tailwind configuration
 │   │   └── globals.css
 │   └── (other folders as needed)
-├── public/
-│   └── docs/
-│       ├── app-files-explanation.md
-│       └── livestream-timestamp-app-concept.md
-├── tests/
+├── public/                    # Static assets and documentation
+│   └── docs/                  # Project documentation files
+├── tests/                     # End-to-end tests with Playwright
 │   └── livestream.spec.ts
-├── playwright.config.ts
-└── (other config files)
+├── playwright.config.ts       # Playwright testing configuration
+└── (other config files)       # TypeScript, Tailwind, ESLint configs
 ```
+
+### Technology Stack
+
+- **Frontend Framework**: Next.js 14 with App Router for optimal performance
+- **Language**: TypeScript for type safety and better developer experience
+- **Styling**: Tailwind CSS for modern, responsive design
+- **Testing**: Playwright for comprehensive end-to-end testing
+- **Build Tool**: Turbopack for fast development builds
 
 ## Quick Start
 

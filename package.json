@@ -1,7 +1,9 @@
 {
-  "name": "nextjs-template",
+  "name": "live-note",
   "version": "0.1.0",
   "private": true,
+  "description": "A powerful livestream timestamp tool for content creators to note and archive important moments during live broadcasts with automatic timestamps",
+  "keywords": ["livestream", "timestamp", "notes", "content-creation", "streaming", "archive"],
   "scripts": {
     "dev": "next dev --turbo",
     "build": "next build",
