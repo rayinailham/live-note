@@ -1,10 +1,18 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 
 type Note = {
   timestamp: string
   text: string
+}
+
+type Stream = {
+  name: string
+  notes: Note[]
+  totalSeconds: number
+  date: string
 }
 
 export default function Home() {
@@ -14,6 +22,8 @@ export default function Home() {
   const [seconds, setSeconds] = useState(0)
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null)
   const [isClicked, setIsClicked] = useState(false)
+  const [streamName, setStreamName] = useState('')
+  const [archivedStreams, setArchivedStreams] = useState<Stream[]>([])
 
   const formatTime = (totalSeconds: number): string => {
     const hours = Math.floor(totalSeconds / 3600)
@@ -52,14 +62,90 @@ export default function Home() {
     }
   }, [intervalId])
 
-  const handleAddNote = () => {
-    if (currentNote.trim() && isRunning) {
-      const newNote: Note = {
-        timestamp: formatTime(seconds),
-        text: currentNote.trim()
+  // Load data from local storage on mount
+  useEffect(() => {
+    const savedStreamName = localStorage.getItem('livestream-streamName')
+    const savedNotes = localStorage.getItem('livestream-notes')
+    const savedSeconds = localStorage.getItem('livestream-seconds')
+    const savedArchivedStreams = localStorage.getItem('livestream-archivedStreams')
+
+    if (savedStreamName) {
+      setStreamName(savedStreamName)
+    }
+    if (savedNotes) {
+      try {
+        setNotes(JSON.parse(savedNotes))
+      } catch (error) {
+        console.error('Error parsing saved notes:', error)
       }
-      setNotes([...notes, newNote])
-      setCurrentNote('')
+    }
+    if (savedSeconds) {
+      setSeconds(parseInt(savedSeconds, 10) || 0)
+    }
+    if (savedArchivedStreams) {
+      try {
+        setArchivedStreams(JSON.parse(savedArchivedStreams))
+      } catch (error) {
+        console.error('Error parsing saved archived streams:', error)
+      }
+    }
+  }, [])
+
+  // Save data to local storage whenever state changes
+  useEffect(() => {
+    localStorage.setItem('livestream-streamName', streamName)
+  }, [streamName])
+
+  useEffect(() => {
+    localStorage.setItem('livestream-notes', JSON.stringify(notes))
+  }, [notes])
+
+  useEffect(() => {
+    localStorage.setItem('livestream-archivedStreams', JSON.stringify(archivedStreams))
+  }, [archivedStreams])
+
+  const handleAddNote = () => {
+    if (!currentNote.trim()) {
+      return // Don't add empty notes
+    }
+    
+    if (!isRunning) {
+      alert('Please start the timer first to add notes with timestamps.')
+      return
+    }
+
+    const newNote: Note = {
+      timestamp: formatTime(seconds),
+      text: currentNote.trim()
+    }
+    setNotes([...notes, newNote])
+    setCurrentNote('')
+  }
+
+  const handleSaveStream = () => {
+    if (!streamName.trim()) {
+      alert('Please enter a stream name before saving.')
+      return
+    }
+    if (notes.length === 0) {
+      alert('No notes to save. Add some notes first.')
+      return
+    }
+    const newStream: Stream = {
+      name: streamName.trim(),
+      notes: [...notes],
+      totalSeconds: seconds,
+      date: new Date().toISOString()
+    }
+    setArchivedStreams([...archivedStreams, newStream])
+    // Reset current state
+    setStreamName('')
+    setNotes([])
+    setSeconds(0)
+    setIsRunning(false)
+    if (intervalId) {
+      clearInterval(intervalId)
+      setIntervalId(null)
     }
   }
 
@@ -69,6 +155,22 @@ export default function Home() {
         <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
           Livestream Timestamp App
         </h1>
+
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+          <div className="mb-4">
+            <label htmlFor="streamName" className="block text-sm font-medium text-gray-700 mb-2">
+              Stream Name
+            </label>
+            <input
+              id="streamName"
+              type="text"
+              value={streamName}
+              onChange={(e) => setStreamName(e.target.value)}
+              placeholder="Enter stream name..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+            />
+          </div>
+        </div>
 
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <div className="flex justify-center space-x-4 mb-6">
@@ -97,6 +199,11 @@ export default function Home() {
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && e.ctrlKey) {
                   e.preventDefault()
+                  if (!currentNote.trim()) return
+                  if (!isRunning) {
+                    alert('Please start the timer first to add notes with timestamps.')
+                    return
+                  }
                   handleAddNote()
                 }
               }}
@@ -108,10 +215,34 @@ export default function Home() {
           <div className="flex justify-center">
             <button
               onClick={handleAddNote}
-              className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+              disabled={!isRunning || !currentNote.trim()}
+              className={`font-semibold py-2 px-6 rounded-lg transition-colors ${
+                isRunning && currentNote.trim()
+                  ? 'bg-green-500 hover:bg-green-600 text-white'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
             >
               Add Note
             </button>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+          <div className="flex justify-center space-x-4">
+            <button
+              onClick={handleSaveStream}
+              disabled={!streamName.trim() || notes.length === 0}
+              className={`font-semibold py-2 px-6 rounded-lg transition-colors ${
+                streamName.trim() && notes.length > 0
+                  ? 'bg-purple-500 hover:bg-purple-600 text-white'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
+            >
+              Save Stream
+            </button>
+            <Link href="/archive" className="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors">
+              View Archive
+            </Link>
           </div>
         </div>
 
