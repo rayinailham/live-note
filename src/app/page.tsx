@@ -217,7 +217,7 @@ export default function Home() {
           </ul>
         )}
       </div>
-      <div className="w-3/4 p-8 overflow-y-auto">
+      <div className="w-3/4 p-8 flex flex-col min-h-0">
         {selectedStream ? (
           <div>
             <h1 className="text-3xl font-bold mb-8 text-gray-800">
@@ -255,11 +255,37 @@ export default function Home() {
           </div>
         ) : (
           <div>
-            <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-              Live Note - Livestream Timestamp Tool
-            </h1>
+            <div className="flex justify-between items-center mb-8">
+              <h1 className="text-3xl font-bold text-gray-800">
+                Live Note - Livestream Timestamp Tool
+              </h1>
+              <div className="flex space-x-4">
+                <button
+                  onClick={handleSaveStream}
+                  disabled={!streamName.trim() || notes.length === 0}
+                  className={`font-semibold py-2 px-6 rounded-lg transition-colors ${
+                    streamName.trim() && notes.length > 0
+                      ? 'bg-purple-500 hover:bg-purple-600 text-white'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
+                >
+                  Save Stream
+                </button>
+                <button
+                  onClick={handleExportNotes}
+                  disabled={notes.length === 0}
+                  className={`font-semibold py-2 px-6 rounded-lg transition-colors ${
+                    notes.length > 0
+                      ? 'bg-orange-500 hover:bg-orange-600 text-white'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
+                >
+                  Export Notes
+                </button>
+              </div>
+            </div>
 
-            <div className="bg-white rounded-lg border border-gray-300 p-6">
+            <div className="bg-white rounded-lg border border-gray-300 p-6 flex-1 min-h-0 overflow-y-auto">
               {/* Stream Name Section */}
               <div className="mb-8">
                 <label htmlFor="streamName" className="block text-sm font-medium text-gray-700 mb-2">
@@ -273,30 +299,6 @@ export default function Home() {
                   placeholder="Enter stream name..."
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                 />
-                <div className="flex space-x-4 mt-4">
-                  <button
-                    onClick={handleSaveStream}
-                    disabled={!streamName.trim() || notes.length === 0}
-                    className={`font-semibold py-2 px-6 rounded-lg transition-colors ${
-                      streamName.trim() && notes.length > 0
-                        ? 'bg-purple-500 hover:bg-purple-600 text-white'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    }`}
-                  >
-                    Save Stream
-                  </button>
-                  <button
-                    onClick={handleExportNotes}
-                    disabled={notes.length === 0}
-                    className={`font-semibold py-2 px-6 rounded-lg transition-colors ${
-                      notes.length > 0
-                        ? 'bg-orange-500 hover:bg-orange-600 text-white'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    }`}
-                  >
-                    Export Notes
-                  </button>
-                </div>
               </div>
 
               {/* Timer Section */}
