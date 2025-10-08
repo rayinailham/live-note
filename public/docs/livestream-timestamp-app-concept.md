@@ -45,7 +45,7 @@ Berikut adalah rencana pengembangan aplikasi secara terstruktur dalam beberapa p
 - **Deskripsi**: Tambahkan penyimpanan otomatis catatan di local storage browser. Gunakan `useEffect` untuk memuat data saat aplikasi dimuat dan menyimpan perubahan saat note ditambahkan, memastikan persistensi antar sesi.
 - **Tujuan**: Data tidak hilang saat browser ditutup atau aplikasi direfresh.
 
-###  Phase 4: Fitur Ekspor
+### [x] Phase 4: Fitur Ekspor
 - **Deskripsi**: Tambahkan tombol ekspor yang memungkinkan pengguna mengunduh daftar catatan sebagai file .txt atau .md. Format file: daftar notes dengan timestamp dan teks, menggunakan API Blob dan link download.
 - **Tujuan**: Pengguna dapat menyimpan atau berbagi catatan secara eksternal.
 

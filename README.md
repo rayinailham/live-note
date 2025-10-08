@@ -1,37 +1,37 @@
 # Livestream Timestamp App (Live Note)
 
-Aplikasi untuk membantu pembuat konten atau penonton livestream dalam mencatat momen penting selama siaran langsung. Dengan fitur timestamp otomatis, pengguna dapat menandai waktu spesifik dari livestream dan menambahkan catatan terkait, sehingga memudahkan untuk mereview atau membuat ringkasan konten nanti.
+An app to help content creators or livestream viewers note important moments during live broadcasts. With automatic timestamp features, users can mark specific times from the livestream and add related notes, making it easier to review or summarize content later.
 
-## Fitur Utama
+## Main Features
 
-- **Tombol Start**: Memulai penghitung waktu (timer) dari nol saat diklik.
-- **Input Notes**: Kolom teks untuk menulis catatan atau deskripsi momen.
-- **Tombol Add Note**: Menambahkan catatan baru dengan timestamp otomatis berdasarkan waktu yang telah berjalan sejak tombol start diklik.
-- **List Notes**: Menampilkan semua catatan yang telah ditambahkan dalam urutan kronologis, berjajar ke bawah.
-- **Penyimpanan Lokal**: Catatan disimpan secara otomatis di local storage browser untuk persistensi data antar sesi aplikasi.
-- **Ekspor Catatan**: Opsi untuk mengekspor daftar catatan sebagai file .txt atau .md untuk penyimpanan eksternal atau berbagi.
+- **Start Button**: Starts the timer from zero when clicked.
+- **Notes Input**: Text field for writing notes or descriptions of moments.
+- **Add Note Button**: Adds a new note with automatic timestamp based on elapsed time since the start button was clicked.
+- **Notes List**: Displays all added notes in chronological order, aligned downwards.
+- **Local Storage**: Notes are automatically saved in browser local storage for data persistence across app sessions.
+- **Export Notes**: Option to export the list of notes as a .txt or .md file for external storage or sharing.
 
-## Alur Penggunaan
+## Usage Flow
 
-1. **Persiapan**: Buka aplikasi dan pastikan siaran livestream sedang berjalan di perangkat terpisah atau tab lain.
-2. **Memulai Timer**: Klik tombol "Start" untuk memulai penghitung waktu. Timer akan mulai berjalan dari 00:00:00.
-3. **Mencatat Momen**: Saat ada momen penting dalam livestream, tulis deskripsi singkat di kolom input notes.
-4. **Menambahkan Catatan**: Klik tombol "Add Note" untuk menyimpan catatan tersebut. Catatan akan otomatis disertai dengan timestamp saat ini (misalnya, "00:05:23 - Deskripsi momen").
-5. **Melihat Daftar Catatan**: Semua catatan akan muncul dalam daftar yang berjajar ke bawah, memungkinkan pengguna untuk melihat kronologi peristiwa selama livestream.
-6. **Mengulangi Proses**: Ulangi langkah 3-4 untuk setiap momen yang ingin dicatat. Timer terus berjalan hingga aplikasi ditutup atau direset.
-7. **Menyimpan atau Mengekspor**: Catatan disimpan otomatis di local storage browser. Klik tombol ekspor untuk mengunduh daftar catatan sebagai file .txt atau .md.
+1. **Preparation**: Open the app and ensure the livestream is running on a separate device or tab.
+2. **Starting Timer**: Click the "Start" button to start the timer. The timer will start running from 00:00:00.
+3. **Noting Moments**: When there's an important moment in the livestream, write a brief description in the notes input field.
+4. **Adding Note**: Click "Add Note" to save the note. The note will automatically include the current timestamp (e.g., "00:05:23 - Moment description").
+5. **Viewing Notes List**: All notes will appear in a list aligned downwards, allowing users to see the chronology of events during the livestream.
+6. **Repeating Process**: Repeat steps 3-4 for each moment to note. The timer continues running until the app is closed or reset.
+7. **Saving or Exporting**: Notes are automatically saved in browser local storage. Click the export button to download the notes list as a .txt or .md file.
 
-## Struktur Folder
+## Folder Structure
 
 ```
 live-note/
 ├── src/
-│   ├── app/           # Halaman Next.js dengan App Router
+│   ├── app/           # Next.js pages with App Router
 │   │   ├── layout.tsx
 │   │   ├── page.tsx
 │   │   └── archive/
 │   │       └── page.tsx
-│   ├── styles/        # File CSS global
+│   ├── styles/        # Global CSS files
 │   │   └── globals.css
 │   └── (other folders as needed)
 ├── public/
@@ -44,14 +44,6 @@ live-note/
 └── (other config files)
 ```
 
-## Phase Pengembangan
-
-- ✅ Phase 1: Setup Proyek dan UI Dasar
-- ✅ Phase 2: Timer dan Add Notes
-- ✅ Phase 3: Local Storage Integration
-- ⏳ Phase 4: Fitur Ekspor
-- ✅ Phase 5: Testing dan Polish
-
 ## Quick Start
 
 ```bash
@@ -61,16 +53,16 @@ npm run dev
 
 ## Scripts
 
-- `npm run dev` - Menjalankan development server dengan Turbopack
-- `npm run build` - Build aplikasi untuk production
-- `npm run start` - Menjalankan production server
-- `npm run lint` - Menjalankan ESLint
-- `npm run type-check` - Cek TypeScript errors
-- `npm run test` - Menjalankan Playwright tests
+- `npm run dev` - Run development server with Turbopack
+- `npm run build` - Build app for production
+- `npm run start` - Run production server
+- `npm run lint` - Run ESLint
+- `npm run type-check` - Check TypeScript errors
+- `npm run test` - Run Playwright tests
 
 ## Path Aliases
 
-Aplikasi ini menggunakan path aliases untuk import yang lebih bersih:
+The app uses path aliases for cleaner imports:
 
 ```typescript
 import Component from '@/components/Component'
@@ -85,14 +77,14 @@ Available aliases:
 
 ## Testing
 
-Aplikasi menggunakan Playwright untuk end-to-end testing. Jalankan tests dengan:
+The app uses Playwright for end-to-end testing. Run tests with:
 
 ```bash
 npm run test
 ```
 
-Laporan test tersedia di `playwright-report/` dan `test-results/`.
+Test reports are available in `playwright-report/` and `test-results/`.
 
 ## Customization
 
-Aplikasi ini dapat dikustomisasi sesuai kebutuhan. Tambahkan fitur baru atau modifikasi UI sesuai requirements.
+This app can be customized according to needs. Add new features or modify the UI as per requirements.
