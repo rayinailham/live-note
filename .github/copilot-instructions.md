@@ -23,3 +23,7 @@ import { hook } from '@/hooks/useHook'          // ./src/hooks/
 - Custom CSS variables defined in `:root` for theme colors
 - Dark mode support via `prefers-color-scheme` media query
 - CSS custom properties: `--background`, `--foreground`
+
+## Component Development
+- Avoid using modular components; create components specific to a page directly within that page file
+- In this project, prioritize context over efficiency, as development depends on AI that needs to read the context
