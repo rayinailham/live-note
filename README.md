@@ -7,8 +7,8 @@ Template Next.js sederhana dengan TypeScript dan Tailwind CSS.
 ```
 nextjs-template/
 ├── src/
+│   ├── app/           # Halaman Next.js dengan App Router
 │   ├── components/    # Komponen React yang dapat digunakan kembali
-│   ├── pages/         # Halaman Next.js 
 │   ├── styles/        # File CSS global
 │   ├── lib/           # Utilitas dan helper functions
 │   ├── hooks/         # Custom React hooks
@@ -56,8 +56,8 @@ import type { User } from '@/types'
 
 Available aliases:
 - `@/*` → `./src/*`
+- `@/app/*` → `./src/app/*`
 - `@/components/*` → `./src/components/*`
-- `@/pages/*` → `./src/pages/*`
 - `@/lib/*` → `./src/lib/*`
 - `@/utils/*` → `./src/utils/*`
 - `@/hooks/*` → `./src/hooks/*`

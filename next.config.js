@@ -11,7 +11,6 @@ const nextConfig = {
       resolveAlias: {
         '@': './src',
         '@/components': './src/components',
-        '@/pages': './src/pages',
         '@/app': './src/app',
         '@/lib': './src/lib',
         '@/utils': './src/utils',
@@ -27,7 +26,6 @@ const nextConfig = {
       ...config.resolve.alias,
       '@': './src',
       '@/components': './src/components',
-      '@/pages': './src/pages',
       '@/app': './src/app',
       '@/lib': './src/lib',
       '@/utils': './src/utils',
