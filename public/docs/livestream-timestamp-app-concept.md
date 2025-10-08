@@ -34,10 +34,10 @@ Aplikasi ini dirancang untuk membantu pembuat konten atau penonton livestream da
 Berikut adalah rencana pengembangan aplikasi secara terstruktur dalam beberapa phase untuk memastikan implementasi yang efisien dan dapat diuji secara bertahap.
 
 ### [x] Phase 1: Setup Proyek dan UI Dasar
-- **Deskripsi**: Siapkan struktur proyek Next.js, buat layout halaman utama dengan komponen dasar: tombol Start, input untuk notes, tombol Add Note, dan area kosong untuk list notes. Pastikan styling menggunakan Tailwind CSS sesuai dengan pola proyek (gunakan path aliases seperti `@/components`).
+- **Deskripsi**: Siapkan struktur proyek Next.js, buat layout halaman utama dengan komponen dasar: tombol Start, input untuk notes, tombol Add Note, dan area kosong untuk list notes. Pastikan styling menggunakan Tailwind CSS sesuai dengan pola proyek.
 - **Tujuan**: Memiliki fondasi UI yang siap untuk interaksi dasar.
 
-### Phase 2: Timer dan Add Notes
+### [x] Phase 2: Timer dan Add Notes
 - **Deskripsi**: Implementasi state untuk timer (mulai dari 00:00:00 saat tombol Start diklik), fungsi untuk menambahkan note dengan timestamp otomatis berdasarkan waktu berjalan, dan tampilkan list notes dalam format "timestamp - teks note" yang berjajar ke bawah.
 - **Tujuan**: Fungsionalitas inti aplikasi (timer dan pencatatan) berjalan.
 

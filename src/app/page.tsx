@@ -13,6 +13,7 @@ export default function Home() {
   const [isRunning, setIsRunning] = useState(false)
   const [seconds, setSeconds] = useState(0)
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null)
+  const [isClicked, setIsClicked] = useState(false)
 
   const formatTime = (totalSeconds: number): string => {
     const hours = Math.floor(totalSeconds / 3600)
@@ -23,11 +24,23 @@ export default function Home() {
 
   const handleStartTimer = () => {
     if (!isRunning) {
+      setIsClicked(true)
+      setTimeout(() => setIsClicked(false), 500)
       setIsRunning(true)
       const id = setInterval(() => {
         setSeconds(prev => prev + 1)
       }, 1000)
       setIntervalId(id)
+    }
+  }
+
+  const handleStopTimer = () => {
+    if (isRunning && intervalId) {
+      setIsClicked(true)
+      setTimeout(() => setIsClicked(false), 500)
+      clearInterval(intervalId)
+      setIsRunning(false)
+      setIntervalId(null)
     }
   }
 
@@ -58,20 +71,17 @@ export default function Home() {
         </h1>
 
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <div className="text-center mb-6">
-            <div className="text-4xl font-mono font-bold text-gray-800 mb-4">
+          <div className="flex justify-center space-x-4 mb-6">
+            <div className={`text-4xl font-mono font-bold text-gray-800 transition-opacity duration-500 ${isClicked ? 'opacity-50' : 'opacity-100'}`}>
               {formatTime(seconds)}
             </div>
+          </div>
+          <div className="flex justify-center mb-6">
             <button
-              onClick={handleStartTimer}
-              disabled={isRunning}
-              className={`font-semibold py-2 px-6 rounded-lg transition-colors ${
-                isRunning
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-red-500 hover:bg-red-600'
-              } text-white`}
+              onClick={isRunning ? handleStopTimer : handleStartTimer}
+              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
             >
-              {isRunning ? 'Timer Running' : 'Start Timer'}
+              {isRunning ? 'Stop Timer' : 'Start Timer'}
             </button>
           </div>
 
@@ -84,6 +94,12 @@ export default function Home() {
               type="text"
               value={currentNote}
               onChange={(e) => setCurrentNote(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && e.ctrlKey) {
+                  e.preventDefault()
+                  handleAddNote()
+                }
+              }}
               placeholder="Enter your note here..."
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
             />
