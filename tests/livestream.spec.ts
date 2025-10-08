@@ -38,8 +38,8 @@ test.describe('Livestream Timestamp App', () => {
   test('should add notes with timestamps', async ({ page }) => {
     const startButton = page.locator('button:has-text("Start Timer")');
     const noteInput = page.locator('#noteInput');
-    const addNoteButton = page.locator('button:has-text("Add Note")');
-    const notesList = page.locator('ul.space-y-2');
+    const addNoteButton = page.locator('button:has-text("Add")');
+    const notesList = page.locator('div.w-3\\/4').locator('ul.space-y-2');
 
     // Start timer
     await startButton.click();
@@ -56,7 +56,7 @@ test.describe('Livestream Timestamp App', () => {
 
   test('should not add empty notes', async ({ page }) => {
     const startButton = page.locator('button:has-text("Start Timer")');
-    const addNoteButton = page.locator('button:has-text("Add Note")');
+    const addNoteButton = page.locator('button:has-text("Add")');
 
     await startButton.click();
     // Button should be disabled when input is empty
@@ -66,7 +66,7 @@ test.describe('Livestream Timestamp App', () => {
   test('should export notes', async ({ page }) => {
     const startButton = page.locator('button:has-text("Start Timer")');
     const noteInput = page.locator('#noteInput');
-    const addNoteButton = page.locator('button:has-text("Add Note")');
+    const addNoteButton = page.locator('button:has-text("Add")');
     const exportButton = page.locator('button:has-text("Export Notes")');
 
     // Start timer and add note
@@ -85,9 +85,9 @@ test.describe('Livestream Timestamp App', () => {
     const streamNameInput = page.locator('#streamName');
     const startButton = page.locator('button:has-text("Start Timer")');
     const noteInput = page.locator('#noteInput');
-    const addNoteButton = page.locator('button:has-text("Add Note")');
+    const addNoteButton = page.locator('button:has-text("Add")');
     const saveButton = page.locator('button:has-text("Save Stream")');
-    const notesList = page.locator('ul.space-y-2');
+    const notesList = page.locator('div.w-3\\/4').locator('ul.space-y-2');
 
     await streamNameInput.fill('Test Stream');
     await expect(streamNameInput).toHaveValue('Test Stream');
@@ -107,7 +107,7 @@ test.describe('Livestream Timestamp App', () => {
 
   test('should handle edge case: add note without starting timer', async ({ page }) => {
     const noteInput = page.locator('#noteInput');
-    const addNoteButton = page.locator('button:has-text("Add Note")');
+    const addNoteButton = page.locator('button:has-text("Add")');
 
     await noteInput.fill('Note without timer');
     // Button should be disabled when timer not running
@@ -118,7 +118,7 @@ test.describe('Livestream Timestamp App', () => {
     const streamNameInput = page.locator('#streamName');
     const startButton = page.locator('button:has-text("Start Timer")');
     const noteInput = page.locator('#noteInput');
-    const addNoteButton = page.locator('button:has-text("Add Note")');
+    const addNoteButton = page.locator('button:has-text("Add")');
     const saveButton = page.locator('button:has-text("Save Stream")');
 
     await streamNameInput.fill('Test Stream');
@@ -126,10 +126,10 @@ test.describe('Livestream Timestamp App', () => {
     await page.waitForTimeout(1000);
     await noteInput.fill('Test note');
     await addNoteButton.click();
-    await expect(page.locator('ul.space-y-2 li')).toHaveCount(1);
+    await expect(page.locator('div.w-3\\/4').locator('ul.space-y-2 li')).toHaveCount(1);
 
     await expect(saveButton).toBeEnabled();
     await saveButton.click();
-    await expect(page.locator('ul.space-y-2 li')).toHaveCount(0);
+    await expect(page.locator('div.w-3\\/4').locator('ul.space-y-2 li')).toHaveCount(0);
   });
 });
