@@ -1,54 +1,19 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
-
-type Note = {
-  timestamp: string
-  text: string
-}
-
-type Stream = {
-  name: string
-  notes: Note[]
-  totalSeconds: number
-  date: string
-}
+import { useState } from 'react'
+import { useLocalStorage } from '@/hooks/useLocalStorage'
+import { streamService } from '@/services/streamService'
+import { formatTime, formatDate } from '@/lib/utils'
+import type { Stream } from '@/types/stream'
 
 export default function Archive() {
-  const [archivedStreams, setArchivedStreams] = useState<Stream[]>([])
+  const { archivedStreams, setArchivedStreams } = useLocalStorage()
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const [editingName, setEditingName] = useState('')
 
-  useEffect(() => {
-    const savedArchivedStreams = localStorage.getItem('livestream-archivedStreams')
-    if (savedArchivedStreams) {
-      try {
-        setArchivedStreams(JSON.parse(savedArchivedStreams))
-      } catch (error) {
-        console.error('Error parsing saved archived streams:', error)
-      }
-    }
-  }, [])
-
-  const formatTime = (totalSeconds: number): string => {
-    const hours = Math.floor(totalSeconds / 3600)
-    const minutes = Math.floor((totalSeconds % 3600) / 60)
-    const secs = totalSeconds % 60
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
-  }
-
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString()
-  }
-
   const handleDelete = (index: number) => {
-    if (confirm('Are you sure you want to delete this stream?')) {
-      const updatedStreams = archivedStreams.filter((_, i) => i !== index)
-      setArchivedStreams(updatedStreams)
-      localStorage.setItem('livestream-archivedStreams', JSON.stringify(updatedStreams))
-    }
+    streamService.deleteStream(archivedStreams, setArchivedStreams, index)
   }
 
   const handleEdit = (index: number) => {
@@ -68,7 +33,6 @@ export default function Archive() {
     const updatedStreams = [...archivedStreams]
     updatedStreams[editingIndex!].name = editingName.trim()
     setArchivedStreams(updatedStreams)
-    localStorage.setItem('livestream-archivedStreams', JSON.stringify(updatedStreams))
     setEditingIndex(null)
     setEditingName('')
   }
@@ -79,20 +43,7 @@ export default function Archive() {
   }
 
   const handleExportStream = (stream: Stream) => {
-    if (stream.notes.length === 0) {
-      alert('No notes to export for this stream.')
-      return
-    }
-    const content = stream.notes.map(note => `${note.timestamp} - ${note.text}`).join('\n')
-    const blob = new Blob([content], { type: 'text/plain' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `${stream.name}-notes.txt`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
+    streamService.exportSelectedStream(stream)
   }
 
   return (

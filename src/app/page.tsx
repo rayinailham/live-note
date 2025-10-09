@@ -2,196 +2,71 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-
-type Note = {
-  timestamp: string
-  text: string
-}
-
-type Stream = {
-  name: string
-  notes: Note[]
-  totalSeconds: number
-  date: string
-}
+import { formatTime } from '@/lib/utils'
+import { useTimer } from '@/hooks/useTimer'
+import { useLocalStorage } from '@/hooks/useLocalStorage'
+import { streamService } from '@/services/streamService'
+import type { Note, Stream } from '@/types/stream'
 
 export default function Home() {
-  const [notes, setNotes] = useState<Note[]>([])
   const [currentNote, setCurrentNote] = useState('')
-  const [isRunning, setIsRunning] = useState(false)
-  const [seconds, setSeconds] = useState(0)
-  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null)
-  const [isClicked, setIsClicked] = useState(false)
-  const [streamName, setStreamName] = useState('')
-  const [archivedStreams, setArchivedStreams] = useState<Stream[]>([])
-  const [selectedStream, setSelectedStream] = useState<Stream | null>(null)
   const [editingNoteIndex, setEditingNoteIndex] = useState<number | null>(null)
   const [editingNoteText, setEditingNoteText] = useState('')
+  const [editingStreamName, setEditingStreamName] = useState(false)
+  const [editingStreamNameText, setEditingStreamNameText] = useState('')
 
-  const formatTime = (totalSeconds: number): string => {
-    const hours = Math.floor(totalSeconds / 3600)
-    const minutes = Math.floor((totalSeconds % 3600) / 60)
-    const secs = totalSeconds % 60
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
-  }
+  const {
+    streamName,
+    setStreamName,
+    notes,
+    setNotes,
+    seconds,
+    setSeconds,
+    archivedStreams,
+    setArchivedStreams,
+    selectedStream,
+    setSelectedStream
+  } = useLocalStorage()
 
-  const handleStartTimer = () => {
-    if (!isRunning) {
-      setIsClicked(true)
-      setTimeout(() => setIsClicked(false), 500)
-      setIsRunning(true)
-      const id = setInterval(() => {
-        setSeconds(prev => prev + 1)
-      }, 1000)
-      setIntervalId(id)
-    }
-  }
-
-  const handleStopTimer = () => {
-    if (isRunning && intervalId) {
-      setIsClicked(true)
-      setTimeout(() => setIsClicked(false), 500)
-      clearInterval(intervalId)
-      setIsRunning(false)
-      setIntervalId(null)
-    }
-  }
-
-  useEffect(() => {
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId)
-      }
-    }
-  }, [intervalId])
-
-  // Load data from local storage on mount
-  useEffect(() => {
-    const savedStreamName = localStorage.getItem('livestream-streamName')
-    const savedNotes = localStorage.getItem('livestream-notes')
-    const savedSeconds = localStorage.getItem('livestream-seconds')
-    const savedArchivedStreams = localStorage.getItem('livestream-archivedStreams')
-
-    if (savedStreamName) {
-      setStreamName(savedStreamName)
-    }
-    if (savedNotes) {
-      try {
-        setNotes(JSON.parse(savedNotes))
-      } catch (error) {
-        console.error('Error parsing saved notes:', error)
-      }
-    }
-    if (savedSeconds) {
-      setSeconds(parseInt(savedSeconds, 10) || 0)
-    }
-    if (savedArchivedStreams) {
-      console.log('savedArchivedStreams:', savedArchivedStreams)
-      try {
-        const parsed = JSON.parse(savedArchivedStreams)
-        console.log('Parsed archivedStreams:', parsed)
-        setArchivedStreams(parsed)
-      } catch (error) {
-        console.error('Error parsing saved archived streams:', error)
-      }
-    }
-  }, [])
-
-  // Save data to local storage whenever state changes
-  useEffect(() => {
-    localStorage.setItem('livestream-streamName', streamName)
-  }, [streamName])
-
-  useEffect(() => {
-    localStorage.setItem('livestream-notes', JSON.stringify(notes))
-  }, [notes])
-
-  useEffect(() => {
-    console.log('Saving archivedStreams to localStorage:', archivedStreams)
-    localStorage.setItem('livestream-archivedStreams', JSON.stringify(archivedStreams))
-  }, [archivedStreams])
+  const {
+    isRunning,
+    handleStartTimer,
+    handleStopTimer,
+    isClicked
+  } = useTimer(seconds, setSeconds)
 
   const handleAddNote = () => {
-    if (!currentNote.trim()) {
-      return // Don't add empty notes
-    }
-    
-    if (!isRunning) {
-      alert('Please start the timer first to add notes with timestamps.')
-      return
-    }
-
-    const newNote: Note = {
-      timestamp: formatTime(seconds),
-      text: currentNote.trim()
-    }
-    setNotes([...notes, newNote])
-    setCurrentNote('')
+    streamService.addNote(
+      currentNote,
+      setCurrentNote,
+      notes,
+      setNotes,
+      seconds,
+      isRunning,
+      formatTime
+    )
   }
 
   const handleSaveStream = () => {
-    if (!streamName.trim()) {
-      alert('Please enter a stream name before saving.')
-      return
-    }
-    if (notes.length === 0) {
-      alert('No notes to save. Add some notes first.')
-      return
-    }
-    if (archivedStreams.some(stream => stream.name === streamName.trim())) {
-      alert('A stream with this name already exists. Please choose a different name.')
-      return
-    }
-    const newStream: Stream = {
-      name: streamName.trim(),
-      notes: [...notes],
-      totalSeconds: seconds,
-      date: new Date().toISOString()
-    }
-    setArchivedStreams([...archivedStreams, newStream])
-    // Reset current state
-    setStreamName('')
-    setNotes([])
-    setSeconds(0)
-    setIsRunning(false)
-    if (intervalId) {
-      clearInterval(intervalId)
-      setIntervalId(null)
-    }
+    streamService.saveStream(
+      streamName,
+      notes,
+      seconds,
+      archivedStreams,
+      setArchivedStreams,
+      setStreamName,
+      setNotes,
+      setSeconds,
+      handleStopTimer
+    )
   }
 
   const handleExportNotes = () => {
-    if (notes.length === 0) {
-      alert('No notes to export. Add some notes first.')
-      return
-    }
-    const content = notes.map(note => `${note.timestamp} - ${note.text}`).join('\n')
-    const blob = new Blob([content], { type: 'text/plain' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'livestream-notes.txt'
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
+    streamService.exportNotes(notes)
   }
 
   const handleExportSelectedStream = () => {
-    if (!selectedStream || selectedStream.notes.length === 0) {
-      alert('No notes to export for this stream.')
-      return
-    }
-    const content = selectedStream.notes.map(note => `${note.timestamp} - ${note.text}`).join('\n')
-    const blob = new Blob([content], { type: 'text/plain' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `${selectedStream.name}-notes.txt`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
+    streamService.exportSelectedStream(selectedStream)
   }
 
   const handleEditNote = (index: number, text: string) => {
@@ -200,18 +75,14 @@ export default function Home() {
   }
 
   const handleSaveEdit = () => {
-    if (editingNoteIndex === null || !selectedStream) return
-    const updatedNotes = [...selectedStream.notes]
-    updatedNotes[editingNoteIndex] = {
-      ...updatedNotes[editingNoteIndex],
-      text: editingNoteText.trim()
-    }
-    const updatedStream = { ...selectedStream, notes: updatedNotes }
-    const updatedArchivedStreams = archivedStreams.map(stream =>
-      stream.name === selectedStream.name ? updatedStream : stream
+    streamService.editNote(
+      editingNoteIndex!,
+      editingNoteText,
+      selectedStream,
+      archivedStreams,
+      setArchivedStreams,
+      setSelectedStream
     )
-    setArchivedStreams(updatedArchivedStreams)
-    setSelectedStream(updatedStream)
     setEditingNoteIndex(null)
     setEditingNoteText('')
   }
@@ -221,16 +92,37 @@ export default function Home() {
     setEditingNoteText('')
   }
 
-  const handleDeleteNote = (index: number) => {
+  const handleEditStreamName = () => {
     if (!selectedStream) return
-    if (!confirm('Are you sure you want to delete this note?')) return
-    const updatedNotes = selectedStream.notes.filter((_, i) => i !== index)
-    const updatedStream = { ...selectedStream, notes: updatedNotes }
-    const updatedArchivedStreams = archivedStreams.map(stream =>
-      stream.name === selectedStream.name ? updatedStream : stream
+    setEditingStreamName(true)
+    setEditingStreamNameText(selectedStream.name)
+  }
+
+  const handleSaveEditStreamName = () => {
+    streamService.editStreamName(
+      editingStreamNameText,
+      selectedStream,
+      archivedStreams,
+      setArchivedStreams,
+      setSelectedStream
     )
-    setArchivedStreams(updatedArchivedStreams)
-    setSelectedStream(updatedStream)
+    setEditingStreamName(false)
+    setEditingStreamNameText('')
+  }
+
+  const handleCancelEditStreamName = () => {
+    setEditingStreamName(false)
+    setEditingStreamNameText('')
+  }
+
+  const handleDeleteNote = (index: number) => {
+    streamService.deleteNote(
+      index,
+      selectedStream,
+      archivedStreams,
+      setArchivedStreams,
+      setSelectedStream
+    )
   }
 
   return (
@@ -265,9 +157,46 @@ export default function Home() {
       <div className="w-3/4 p-8 flex flex-col h-full">
         {selectedStream ? (
           <div>
-            <h1 className="text-3xl font-bold mb-8 text-gray-800">
-              {selectedStream.name}
-            </h1>
+            <div className="flex items-center space-x-4 mb-8">
+              {editingStreamName ? (
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="text"
+                    value={editingStreamNameText}
+                    onChange={(e) => setEditingStreamNameText(e.target.value)}
+                    className="text-3xl font-bold px-2 py-1 border border-gray-300 rounded text-black"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleSaveEditStreamName()
+                      if (e.key === 'Escape') handleCancelEditStreamName()
+                    }}
+                  />
+                  <button
+                    onClick={handleSaveEditStreamName}
+                    className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={handleCancelEditStreamName}
+                    className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <h1 className="text-3xl font-bold text-gray-800">
+                    {selectedStream.name}
+                  </h1>
+                  <button
+                    onClick={handleEditStreamName}
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm"
+                  >
+                    Edit Name
+                  </button>
+                </>
+              )}
+            </div>
             <div className="bg-white rounded-lg border border-gray-300 p-6 mb-6">
               <p className="text-sm text-gray-500 mb-4">
                 Total Duration: {formatTime(selectedStream.totalSeconds)} | Saved on: {new Date(selectedStream.date).toLocaleDateString()} {new Date(selectedStream.date).toLocaleTimeString()}
