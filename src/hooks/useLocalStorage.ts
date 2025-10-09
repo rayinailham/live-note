@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useLayoutEffect } from 'react'
 import type { Note, Stream } from '@/types/stream'
 
 export const useLocalStorage = () => {
@@ -9,12 +9,15 @@ export const useLocalStorage = () => {
   const [selectedStream, setSelectedStream] = useState<Stream | null>(null)
 
   // Load data from local storage on mount
-  useEffect(() => {
+  useLayoutEffect(() => {
+    console.log('useLocalStorage: Loading data from localStorage')
     const savedStreamName = localStorage.getItem('livestream-streamName')
     const savedNotes = localStorage.getItem('livestream-notes')
     const savedSeconds = localStorage.getItem('livestream-seconds')
     const savedArchivedStreams = localStorage.getItem('livestream-archivedStreams')
     const savedSelectedStream = localStorage.getItem('livestream-selectedStream')
+
+    console.log('useLocalStorage: savedArchivedStreams raw:', savedArchivedStreams)
 
     if (savedStreamName) {
       setStreamName(savedStreamName)
@@ -34,16 +37,26 @@ export const useLocalStorage = () => {
     if (savedArchivedStreams) {
       try {
         const parsed = JSON.parse(savedArchivedStreams)
-        if (Array.isArray(parsed)) {
+        console.log('useLocalStorage: parsed archivedStreams:', parsed)
+        if (Array.isArray(parsed) && parsed.every(item => 
+          typeof item === 'object' && 
+          item !== null && 
+          typeof item.name === 'string' && 
+          Array.isArray(item.notes) && 
+          typeof item.totalSeconds === 'number' && 
+          typeof item.date === 'string'
+        )) {
           setArchivedStreams(parsed)
+          console.log('useLocalStorage: setArchivedStreams called with:', parsed)
         } else {
+          console.warn('Invalid archived streams data format, resetting to empty array')
           setArchivedStreams([])
-          alert('Saved archived streams data is invalid. Data has been reset.')
+          localStorage.removeItem('livestream-archivedStreams')
         }
       } catch (error) {
-        setArchivedStreams([])
-        alert('Error parsing saved archived streams. Data has been reset.')
         console.error('Error parsing saved archived streams:', error)
+        setArchivedStreams([])
+        localStorage.removeItem('livestream-archivedStreams')
       }
     }
     if (savedSelectedStream) {
