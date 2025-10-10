@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useLocalStorage } from '@/hooks/useLocalStorage'
 import { streamService } from '@/services/streamService'
 import { formatTime, formatDate } from '@/lib/utils'
@@ -11,6 +11,11 @@ export default function Archive() {
   const { archivedStreams, setArchivedStreams } = useLocalStorage()
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const [editingName, setEditingName] = useState('')
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleDelete = (index: number) => {
     streamService.deleteStream(archivedStreams, setArchivedStreams, index)
@@ -44,6 +49,10 @@ export default function Archive() {
 
   const handleExportStream = (stream: Stream) => {
     streamService.exportSelectedStream(stream)
+  }
+
+  if (!mounted) {
+    return null
   }
 
   return (

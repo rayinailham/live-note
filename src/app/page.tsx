@@ -14,6 +14,7 @@ export default function Home() {
   const [editingNoteText, setEditingNoteText] = useState('')
   const [editingStreamName, setEditingStreamName] = useState(false)
   const [editingStreamNameText, setEditingStreamNameText] = useState('')
+  const [mounted, setMounted] = useState(false)
 
   const {
     streamName,
@@ -34,6 +35,10 @@ export default function Home() {
     handleStopTimer,
     isClicked
   } = useTimer(seconds, setSeconds)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleAddNote = () => {
     streamService.addNote(
@@ -123,6 +128,10 @@ export default function Home() {
       setArchivedStreams,
       setSelectedStream
     )
+  }
+
+  if (!mounted) {
+    return null
   }
 
   return (
